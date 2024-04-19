@@ -39,7 +39,7 @@
 # writer_id : VARCHAR(50) NN FK user(user_id)
 # write_datetime : DATETIME NN DEFAULT(now())
 # view_count : INT NN DEFAULT(0)
-# # comment : TEXT 
+# # comment : TEXT   
 
 
 
