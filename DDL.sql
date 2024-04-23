@@ -49,7 +49,8 @@ USE estate;
 
 ## 이메일 인증 번호 테이블 생성
 CREATE TABLE email_auth_number (
-    email VARCHAR(100) PRIMARY KEY, auth_number VARCHAR(4) NOT NULL
+    email VARCHAR(100) PRIMARY KEY, 
+    auth_number VARCHAR(4) NOT NULL
 );
 
 ## 유저 테이블 생성
