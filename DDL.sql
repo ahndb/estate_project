@@ -77,6 +77,7 @@ CREATE TABLE board (
     writer_id VARCHAR(50) NOT NULL, 
     write_datetime DATETIME NOT NULL DEFAULT(now()),
     view_count INT NOT NULL DEFAULT(0),
+    comment TEXT,
     CONSTRAINT writer_id_fk
         FOREIGN KEY (writer_id) REFERENCES user (user_id)
 );
