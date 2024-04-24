@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.estate.back.dto.request.auth.IdCheckRequestDto;
-import com.estate.back.dto.request.auth.SignInRequestDto;
 import com.estate.back.dto.response.ResponseDto;
-import com.estate.back.dto.response.auth.SignInResponseDto;
 import com.estate.back.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -31,12 +29,12 @@ public class AuthController {
       return response;
   }
 
-  @PostMapping("/sign-in")
-  public ResponseEntity<ResponseDto> signIn (
-      @RequestBody @Valid SignInRequestDto requestBody
-    ) {
-      ResponseEntity<ResponseDto> response = SignInResponseDto()
-      return response;
-  }
+  // @PostMapping("/sign-in")
+  // public ResponseEntity<ResponseDto> signIn (
+  //     @RequestBody @Valid SignInRequestDto requestBody
+  //   ) {
+  //     ResponseEntity<ResponseDto> response = SignInResponseDto()
+  //     return response;
+  // }
 
 }

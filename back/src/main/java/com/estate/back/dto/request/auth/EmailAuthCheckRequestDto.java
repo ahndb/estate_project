@@ -5,14 +5,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-// 로그인 Response Body DTO
+// 이메일 인증 확인 Request Body DTO
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class SignInRequestDto {
+public class EmailAuthCheckRequestDto {
   @NotBlank
-  private String userId;
+  private String userEmail;
   @NotBlank
-  private String userPassword;
+  private String autnNumber;
 }
