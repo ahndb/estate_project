@@ -17,6 +17,7 @@ import com.estate.back.repository.EmailAuthNumberRepository;
 import com.estate.back.repository.UserRepository;
 import com.estate.back.service.AuthService;
 
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 // Auth 모듈의 비즈니스 로직 구현체
@@ -56,35 +57,33 @@ public class AuthServiceImplimentation implements AuthService {
 
   @Override
   public ResponseEntity<ResponseDto> emailAuth(EmailAuthRequestDto dto) {
-    
-    String userEmail = dto.getUserEmail();
-    String authNumber = null;
-    try {
-      
-      boolean existedEmail = userRepository.existsByUserEmail(userEmail);
-      if(existedEmail) return ResponseDto.duplicatedEmail(); 
 
-      authNumber = EmailAuthNumberUtil.createNumber();
-      EmailAuthNumberEntity emailAuthNumberEntity = new EmailAuthNumberEntity(userEmail, authNumber);
-      emailAuthNumberRepository.save(emailAuthNumberEntity);
+      try {
 
-    } catch (Exception exception) {
-        exception.printStackTrace();
+          String userEmail = dto.getUserEmail();
+
+          boolean existedEmail = userRepository.existsByUserEmail(userEmail);
+          if (existedEmail) return ResponseDto.duplicatedEmail();
+
+          String authNumber = EmailAuthNumberUtil.createNumber();
+
+          EmailAuthNumberEntity emailAuthNumberEntity = new EmailAuthNumberEntity(userEmail, authNumber);
+          emailAuthNumberRepository.save(emailAuthNumberEntity);
+
+          mailProvider.mailAuthSend(userEmail, authNumber);
+
+      } catch (MessagingException exception) {
+          exception.printStackTrace();
+          return ResponseDto.mailSendFailed();
+      } catch (Exception exception) {
+          exception.printStackTrace();
           return ResponseDto.databaseError();
-    }
+      }
 
-    // 메일 전송 작업
-    try {
-      mailProvider.mailAuthSend(userEmail, authNumber);
+      return ResponseDto.success();
 
-
-    } catch (Exception exception) {
-        exception.printStackTrace();
-        return ResponseDto.mailSendFailed();
-    }
-
-    return ResponseDto.success();
   }
+
 
   @Override
   public ResponseEntity<ResponseDto> emailAuthCheck(EmailAuthCheckRequestDto dto) {
