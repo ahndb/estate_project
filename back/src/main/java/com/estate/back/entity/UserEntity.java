@@ -1,5 +1,9 @@
 package com.estate.back.entity;
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+
+import com.estate.back.dto.request.auth.SignUpRequestDto;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -18,8 +22,15 @@ import lombok.Setter;
 public class UserEntity {
   @Id
   private String userId;
-  private String userpPassword;
+  private String userPassword;
   private String userEmail;
   private String userRole;
   private String joinPath;
+
+  public UserEntity (SignUpRequestDto dto) {
+    
+  }
+
 }
+
+

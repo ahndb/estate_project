@@ -11,15 +11,14 @@ package com.estate.back.dto.response;
 // 500 데이터베이스 오류 : DBE / Database Error.
 
 // Response의 공통된 code 값
-
 public interface ResponseCode {
-  String SUCCESS = "SU";
-  String VALIDATION_FAILED = "VF";
-  String DUPLICATED_ID = "DI";
-  String DUPLICATED_EMAIL = "DE";
-  String SIGN_IN_FAILED = "SF";
-  String AUTHORIZATION_FAILED = "AF";
-  String TOKEN_CREATION_FAILED = "TF";
-  String MAIL_SEND_FAILED = "MF";
-  String DATABASE_ERROR = "DBE";
+    String SUCCESS = "SU";
+    String VALIDATION_FAILED = "VF";
+    String DUPLICATED_ID = "DI";
+    String DUPLICATED_EMAIL = "DE";
+    String SIGN_IN_FAILED = "SF";
+    String AUTHENTICATION_FAILED = "AF";
+    String TOKEN_CREATION_FAILED = "TF";
+    String MAIL_SEND_FAILED = "MF";
+    String DATABASE_ERROR = "DBE";
 }

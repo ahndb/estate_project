@@ -1,6 +1,8 @@
 package com.estate.back.service.implimentation;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.estate.back.common.util.EmailAuthNumberUtil;
@@ -12,6 +14,7 @@ import com.estate.back.dto.request.auth.SignUpRequestDto;
 import com.estate.back.dto.response.ResponseDto;
 import com.estate.back.dto.response.auth.SignInResponseDto;
 import com.estate.back.entity.EmailAuthNumberEntity;
+import com.estate.back.entity.UserEntity;
 import com.estate.back.provider.MailProvider;
 import com.estate.back.repository.EmailAuthNumberRepository;
 import com.estate.back.repository.UserRepository;
@@ -30,6 +33,8 @@ public class AuthServiceImplimentation implements AuthService {
   private final EmailAuthNumberRepository emailAuthNumberRepository;
   private final MailProvider mailProvider;
   
+  private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+  
 
   @Override
   public ResponseEntity<ResponseDto> idCheck(IdCheckRequestDto dto) {
@@ -38,7 +43,7 @@ public class AuthServiceImplimentation implements AuthService {
 
       String userId = dto.getUserId();
       boolean existedUser = userRepository.existsByUserId(userId);
-      if(existedUser) return ResponseDto.duplicateId(); 
+      if(existedUser) return ResponseDto.duplicatedId(); 
       
     } catch (Exception exception) {
         exception.printStackTrace();
@@ -87,14 +92,55 @@ public class AuthServiceImplimentation implements AuthService {
 
   @Override
   public ResponseEntity<ResponseDto> emailAuthCheck(EmailAuthCheckRequestDto dto) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'emailAuthCheck'");
+    
+    try {
+
+      String userEmail = dto.getUserEmail();
+      String authNumber = dto.getAuthNumber();
+      boolean isMatched = emailAuthNumberRepository.existsByEmailAndAuthNumber(userEmail, authNumber);
+      if (!isMatched) return ResponseDto.authenticationFailed(); 
+      
+    } catch (Exception exception) {
+        exception.printStackTrace();
+        return ResponseDto.databaseError();
+    }
+  
+    return ResponseDto.success();
+
   }
 
   @Override
   public ResponseEntity<ResponseDto> signUp(SignUpRequestDto dto) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'signUp'");
+
+    try {
+
+      String userId = dto.getUserId();
+      String userPassword = dto.getUserPassword();
+      String userEmail = dto.getUserEmail();
+      String authNumber = dto.getAuthNumber();
+
+      boolean existedUserId = userRepository.existsByUserId(userId);
+      if (existedUserId) ResponseDto.duplicatedId();
+
+      boolean existedUserEmail = userRepository.existsByUserEmail(userEmail);
+      if (existedUserEmail) ResponseDto.duplicatedEmail();
+
+      boolean isMatched = emailAuthNumberRepository.existsByEmailAndAuthNumber(userEmail, authNumber);
+      if (!isMatched) return ResponseDto.authenticationFailed(); 
+
+      String encodePassword = passwordEncoder.encode(userPassword);
+
+      UserEntity userEntity = new UserEntity();
+      
+
+    
+    } catch (Exception exception) {
+        exception.printStackTrace();
+        return ResponseDto.databaseError();
+    }
+
+    return ResponseDto.success();
+    
   }
 
 

@@ -1,10 +1,17 @@
 # API 기능 세부
-
+  
 ## - Auth
   
-### 회원가입 (sign-in) 
+### 로그인 (sign-in) 
   
 - 클라이언트로부터 요청 (request body에 데이터가 포함되어 있음)  
+  
+1. request body의 데이터에 대해서 유효성 확인  
+1.1 만약 유효하지 않은 데이터이면 'VF' 응답 처리  
+  
+(userId, userPassword)  
+  
+2. 데이터베이스의 user 테이블에서 userId에 해당하는 유저 레코드 조회  
   
   
 ### 아이디 중복 확인 (id-check) 

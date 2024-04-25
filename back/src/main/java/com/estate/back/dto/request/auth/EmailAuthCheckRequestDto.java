@@ -14,5 +14,5 @@ public class EmailAuthCheckRequestDto {
   @NotBlank
   private String userEmail;
   @NotBlank
-  private String autnNumber;
+  private String authNumber;
 }
