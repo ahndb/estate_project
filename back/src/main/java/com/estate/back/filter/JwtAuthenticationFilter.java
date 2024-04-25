@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.estate.back.entity.UserEntity;
-import com.estate.back.provider.jwtProvider;
+import com.estate.back.provider.JwtProvider;
 import com.estate.back.repository.UserRepository;
 
 import jakarta.servlet.FilterChain;
@@ -34,7 +34,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-  private final jwtProvider jwtProvider;
+  private final JwtProvider jwtProvider;
   private final UserRepository userRepository;
 
   // JwtAuthenticationFilter의 실제 동작

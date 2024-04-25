@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 // estate 데이터베이스의 User 테이블과 매핑되는 Entity 클래스
-@Entity(name="user")
-@Table(name="user")
+@Entity(name = "user")
+@Table(name = "user")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,10 +27,12 @@ public class UserEntity {
   private String userRole;
   private String joinPath;
 
-  public UserEntity (SignUpRequestDto dto) {
-    
+  public UserEntity(SignUpRequestDto dto) {
+    this.userId = dto.getUserId();
+    this.userPassword = dto.getUserPassword();
+    this.userEmail = dto.getUserEmail();
+    this.userRole = "ROLE_USER";
+    this.joinPath = "HOME";
   }
 
 }
-
-

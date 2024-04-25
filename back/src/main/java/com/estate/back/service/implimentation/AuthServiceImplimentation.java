@@ -15,6 +15,7 @@ import com.estate.back.dto.response.ResponseDto;
 import com.estate.back.dto.response.auth.SignInResponseDto;
 import com.estate.back.entity.EmailAuthNumberEntity;
 import com.estate.back.entity.UserEntity;
+import com.estate.back.provider.JwtProvider;
 import com.estate.back.provider.MailProvider;
 import com.estate.back.repository.EmailAuthNumberRepository;
 import com.estate.back.repository.UserRepository;
@@ -28,83 +29,112 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImplimentation implements AuthService {
-  
+
   private final UserRepository userRepository;
   private final EmailAuthNumberRepository emailAuthNumberRepository;
+
   private final MailProvider mailProvider;
+  private final JwtProvider jwtProvider;
   
+
+
   private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-  
 
   @Override
   public ResponseEntity<ResponseDto> idCheck(IdCheckRequestDto dto) {
-    
+
     try {
 
       String userId = dto.getUserId();
       boolean existedUser = userRepository.existsByUserId(userId);
-      if(existedUser) return ResponseDto.duplicatedId(); 
-      
+      if (existedUser)
+        return ResponseDto.duplicatedId();
+
     } catch (Exception exception) {
-        exception.printStackTrace();
-        return ResponseDto.databaseError();
+      exception.printStackTrace();
+      return ResponseDto.databaseError();
     }
-  
+
     return ResponseDto.success();
 
   }
 
   @Override
   public ResponseEntity<? super SignInResponseDto> signIn(SignInRequestDto dto) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'signIn'");
+
+    String accessToken = null;
+
+    try {
+
+      String userId = dto.getUserId();
+      String userPassword = dto.getUserPassword();
+
+      UserEntity userEntity = userRepository.findByUserId(userId);
+      if (userEntity == null)
+        return ResponseDto.signInFailed();
+
+      String encodedPassword = userEntity.getUserPassword(); // 암호화되어 있는 비밀번호
+      boolean isMatched = passwordEncoder.matches(userPassword, encodedPassword);
+      if (!isMatched) return ResponseDto.signInFailed();
+
+      accessToken = jwtProvider.create(userId);
+      if (accessToken == null) return ResponseDto.tokenCreationFailed();
+
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+
+    return SignInResponseDto.success(accessToken);
+
   }
 
   @Override
   public ResponseEntity<ResponseDto> emailAuth(EmailAuthRequestDto dto) {
 
-      try {
+    try {
 
-          String userEmail = dto.getUserEmail();
+      String userEmail = dto.getUserEmail();
 
-          boolean existedEmail = userRepository.existsByUserEmail(userEmail);
-          if (existedEmail) return ResponseDto.duplicatedEmail();
+      boolean existedEmail = userRepository.existsByUserEmail(userEmail);
+      if (existedEmail)
+        return ResponseDto.duplicatedEmail();
 
-          String authNumber = EmailAuthNumberUtil.createNumber();
+      String authNumber = EmailAuthNumberUtil.createNumber();
 
-          EmailAuthNumberEntity emailAuthNumberEntity = new EmailAuthNumberEntity(userEmail, authNumber);
-          emailAuthNumberRepository.save(emailAuthNumberEntity);
+      EmailAuthNumberEntity emailAuthNumberEntity = new EmailAuthNumberEntity(userEmail, authNumber);
+      emailAuthNumberRepository.save(emailAuthNumberEntity);
 
-          mailProvider.mailAuthSend(userEmail, authNumber);
+      mailProvider.mailAuthSend(userEmail, authNumber);
 
-      } catch (MessagingException exception) {
-          exception.printStackTrace();
-          return ResponseDto.mailSendFailed();
-      } catch (Exception exception) {
-          exception.printStackTrace();
-          return ResponseDto.databaseError();
-      }
+    } catch (MessagingException exception) {
+      exception.printStackTrace();
+      return ResponseDto.mailSendFailed();
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      return ResponseDto.databaseError();
+    }
 
-      return ResponseDto.success();
+    return ResponseDto.success();
 
   }
 
-
   @Override
   public ResponseEntity<ResponseDto> emailAuthCheck(EmailAuthCheckRequestDto dto) {
-    
+
     try {
 
       String userEmail = dto.getUserEmail();
       String authNumber = dto.getAuthNumber();
       boolean isMatched = emailAuthNumberRepository.existsByEmailAndAuthNumber(userEmail, authNumber);
-      if (!isMatched) return ResponseDto.authenticationFailed(); 
-      
+      if (!isMatched)
+        return ResponseDto.authenticationFailed();
+
     } catch (Exception exception) {
-        exception.printStackTrace();
-        return ResponseDto.databaseError();
+      exception.printStackTrace();
+      return ResponseDto.databaseError();
     }
-  
+
     return ResponseDto.success();
 
   }
@@ -120,29 +150,30 @@ public class AuthServiceImplimentation implements AuthService {
       String authNumber = dto.getAuthNumber();
 
       boolean existedUserId = userRepository.existsByUserId(userId);
-      if (existedUserId) ResponseDto.duplicatedId();
+      if (existedUserId)
+        ResponseDto.duplicatedId();
 
       boolean existedUserEmail = userRepository.existsByUserEmail(userEmail);
-      if (existedUserEmail) ResponseDto.duplicatedEmail();
+      if (existedUserEmail)
+        ResponseDto.duplicatedEmail();
 
       boolean isMatched = emailAuthNumberRepository.existsByEmailAndAuthNumber(userEmail, authNumber);
-      if (!isMatched) return ResponseDto.authenticationFailed(); 
+      if (!isMatched)
+        return ResponseDto.authenticationFailed();
 
       String encodePassword = passwordEncoder.encode(userPassword);
+      dto.setUserPassword(encodePassword);
 
-      UserEntity userEntity = new UserEntity();
-      
+      UserEntity userEntity = new UserEntity(dto);
+      userRepository.save(userEntity);
 
-    
     } catch (Exception exception) {
-        exception.printStackTrace();
-        return ResponseDto.databaseError();
+      exception.printStackTrace();
+      return ResponseDto.databaseError();
     }
 
     return ResponseDto.success();
-    
+
   }
 
-
-  
 }
