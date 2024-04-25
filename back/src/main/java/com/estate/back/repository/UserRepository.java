@@ -10,11 +10,8 @@ import com.estate.back.entity.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, String> {
 
-  boolean existsById(String userId);
-  static boolean existsByUserEmail(String userEmail) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'existsByUserEmail'");
-  }
-
+  boolean existsByUserId(String userId);
+  boolean existsByUserEmail(String userEmail);
+  
   UserEntity findByUserId(String userId);
 }

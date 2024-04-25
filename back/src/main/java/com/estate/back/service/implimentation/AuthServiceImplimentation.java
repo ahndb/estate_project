@@ -3,6 +3,7 @@ package com.estate.back.service.implimentation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.estate.back.common.util.EmailAuthNumberUtil;
 import com.estate.back.dto.request.auth.EmailAuthCheckRequestDto;
 import com.estate.back.dto.request.auth.EmailAuthRequestDto;
 import com.estate.back.dto.request.auth.IdCheckRequestDto;
@@ -10,6 +11,9 @@ import com.estate.back.dto.request.auth.SignInRequestDto;
 import com.estate.back.dto.request.auth.SignUpRequestDto;
 import com.estate.back.dto.response.ResponseDto;
 import com.estate.back.dto.response.auth.SignInResponseDto;
+import com.estate.back.entity.EmailAuthNumberEntity;
+import com.estate.back.provider.MailProvider;
+import com.estate.back.repository.EmailAuthNumberRepository;
 import com.estate.back.repository.UserRepository;
 import com.estate.back.service.AuthService;
 
@@ -22,6 +26,9 @@ import lombok.RequiredArgsConstructor;
 public class AuthServiceImplimentation implements AuthService {
   
   private final UserRepository userRepository;
+  private final EmailAuthNumberRepository emailAuthNumberRepository;
+  private final MailProvider mailProvider;
+  
 
   @Override
   public ResponseEntity<ResponseDto> idCheck(IdCheckRequestDto dto) {
@@ -29,7 +36,7 @@ public class AuthServiceImplimentation implements AuthService {
     try {
 
       String userId = dto.getUserId();
-      boolean existedUser = userRepository.existsById(userId);
+      boolean existedUser = userRepository.existsByUserId(userId);
       if(existedUser) return ResponseDto.duplicateId(); 
       
     } catch (Exception exception) {
@@ -53,13 +60,28 @@ public class AuthServiceImplimentation implements AuthService {
     try {
       
       String userEmail = dto.getUserEmail();
-      boolean existedEmail = UserRepository.existsByUserEmail(userEmail);
-      if(existedEmail) return ResponseDto.duplicatedEmail();
+      boolean existedEmail = userRepository.existsByUserEmail(userEmail);
+      if(existedEmail) return ResponseDto.duplicatedEmail(); 
+
+      String authNumber = EmailAuthNumberUtil.createNumber();
+      EmailAuthNumberEntity emailAuthNumberEntity = new EmailAuthNumberEntity(userEmail, authNumber);
+      emailAuthNumberRepository.save(emailAuthNumberEntity);
 
     } catch (Exception exception) {
         exception.printStackTrace();
           return ResponseDto.databaseError();
     }
+
+    // 메일 전송 작업
+    try {
+      mailProvider.mailAuthSend(null, null);
+
+
+    } catch (Exception exception) {
+        exception.printStackTrace();
+        return ResponseDto.mailSendFailed();
+    }
+
     return ResponseDto.success();
   }
 
