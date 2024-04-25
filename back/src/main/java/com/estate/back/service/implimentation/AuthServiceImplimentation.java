@@ -57,13 +57,14 @@ public class AuthServiceImplimentation implements AuthService {
   @Override
   public ResponseEntity<ResponseDto> emailAuth(EmailAuthRequestDto dto) {
     
+    String userEmail = dto.getUserEmail();
+    String authNumber = null;
     try {
       
-      String userEmail = dto.getUserEmail();
       boolean existedEmail = userRepository.existsByUserEmail(userEmail);
       if(existedEmail) return ResponseDto.duplicatedEmail(); 
 
-      String authNumber = EmailAuthNumberUtil.createNumber();
+      authNumber = EmailAuthNumberUtil.createNumber();
       EmailAuthNumberEntity emailAuthNumberEntity = new EmailAuthNumberEntity(userEmail, authNumber);
       emailAuthNumberRepository.save(emailAuthNumberEntity);
 
@@ -74,7 +75,7 @@ public class AuthServiceImplimentation implements AuthService {
 
     // 메일 전송 작업
     try {
-      mailProvider.mailAuthSend(null, null);
+      mailProvider.mailAuthSend(userEmail, authNumber);
 
 
     } catch (Exception exception) {
