@@ -4,8 +4,8 @@ import './style.css';
 import SignInBackground from 'src/assets/image/sign-in-background.png';
 import SignUpBackground from 'src/assets/image/sing-up-background-image.png';
 import InputBox from 'src/components/Inputbox';
-import { IdCheckRequsetDto } from 'src/apis/auth/dto/request';
-import { idCheckRequest } from 'src/apis/auth';
+import { EmailAuthRequsetDto, IdCheckRequsetDto } from 'src/apis/auth/dto/request';
+import { emailAuthRequest, idCheckRequest } from 'src/apis/auth';
 import ResponseDto from 'src/apis/response.dto';
 
 
@@ -139,6 +139,23 @@ function SignUp ({onLinkClickHandler}: Props) {
 
 };
 
+const emailAuthResponse = (result: ResponseDto | null) => {
+
+  const emailMessage = 
+      !result ? '서버에 문제가 있습니다.' : 
+      result.code === 'VF' ? '이메일 형식이 아닙니다.' :
+      result.code === 'DE' ? '이미 사용중인 이메일 입니다.' :
+      result.code === 'MF' ? '인증번호 전송에 실패했습니다.' :
+      result.code === 'DBE' ? '서버에 문제가 있습니다.' :
+      result.code === 'SU' ? '인증번호가 전송되었습니다.' : '';
+    const emailCheck = result !== null && result.code === 'SU';
+    const emailError = !emailCheck;
+
+    setEmailMessage(emailMessage);
+    setIsEmailCheck(emailCheck);
+    setIsEmailError(emailError);
+};
+
   //          event handler          //
   const onIdChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const {value} = event.target;
@@ -189,7 +206,7 @@ function SignUp ({onLinkClickHandler}: Props) {
     setauthNumberButtonStatus(value !=='');
     setIsAuthNumberCheck(false);  
     setAuthNumberMessage('');
-  }
+  };
 
   const onIdButtonClickHandler = () => {
     if(!idButtonStatus) return;
@@ -198,17 +215,24 @@ function SignUp ({onLinkClickHandler}: Props) {
     const requsetBody: IdCheckRequsetDto = { userId: id };
     idCheckRequest(requsetBody).then(idCheckResponse);
   };  
+
   const onEmailButtonClickHandler = () => {
     if(!emailButtonStatus) return;
 
-    const emailPattern = /^[a-zA-Z0-9]*@([-.]?[a-zA-Z0-9])*\.[a-zA-Z]{2,4}$/;
+    const emailPattern = /^([-.]?[a-zA-Z0-9])*@([-.]?[a-zA-Z0-9])*\.[a-zA-Z]{2,4}$/;
     const isEmailPattern = emailPattern.test(email);
-    setIsEmailCheck(isEmailPattern);  
-    setIsEmailError(!isEmailPattern)
+    if(!isEmailPattern) {
+      setEmailMessage('이메일 형식이 아닙니다.');
+      setIsEmailError(true);
+      setIsEmailCheck(false);  
+      return;
+    }
+    
+    const requestBody: EmailAuthRequsetDto = { userEmail : email};
+    emailAuthRequest(requestBody).then(emailAuthResponse);
 
-    const emailMessage = isEmailPattern ? '인증번호가 전송되었습니다.' : '이메일 형식이 아닙니다.';
-    setEmailMessage(emailMessage);
-  };  
+  };
+
   const onAuthNumberButtonClickHandler = () => {
     if(!authNumberButtonStatus) return;
     

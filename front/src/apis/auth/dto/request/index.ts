@@ -10,7 +10,7 @@ export interface IdCheckRequsetDto {
 }
 
 // description: 이메일 인증 Requset Body DTO
-export interface EmailAuthkRequsetDto {
+export interface EmailAuthRequsetDto {
   userEmail : string;
 }
 
