@@ -15,7 +15,7 @@ export interface EmailAuthkRequsetDto {
 }
 
 // description: 이메일 인증 확인 Requset Body DTO
-export interface EmailAuthCheckkRequsetDto {
+export interface EmailAuthCheckRequsetDto {
   userEmail : string;
   authNumber : string;
 }
