@@ -6,6 +6,7 @@ import SignUpBackground from 'src/assets/image/sing-up-background-image.png';
 import InputBox from 'src/components/Inputbox';
 import { IdCheckRequsetDto } from 'src/apis/auth/dto/request';
 import { idCheckRequest } from 'src/apis/auth';
+import ResponseDto from 'src/apis/response.dto';
 
 
 type AuthPage = 'sign-in' | 'sign-up';
@@ -99,7 +100,7 @@ function SignUp ({onLinkClickHandler}: Props) {
   const [emailButtonStatus, setEmailButtonStatus] = useState<boolean>(false);
   const [authNumberButtonStatus, setauthNumberButtonStatus] = useState<boolean>(false);
   
-  const [isIdCheck,setIsIdCheck] = useState<boolean>(false);
+  const [isIdCheck, setIsIdCheck] = useState<boolean>(false);
   const [isPasswordPattern,setIsPasswordPattern] = useState<boolean>(false);
   const [isEqaulPassword,setIsEqaulPassword] = useState<boolean>(false);
   const [isEmailCheck,setIsEmailCheck] = useState<boolean>(false);
@@ -119,6 +120,24 @@ function SignUp ({onLinkClickHandler}: Props) {
   const signUpButtonClass = `${isSignUpActive ? 'primary' : 'disable'}-button full-width`
   // isSignUpActive ? 'primary-button full-width' : 'disable-button full-width' 
   // (isSignUpActive ? 'primary' :  'disable') + -'button full-width'
+
+  //                    function                    //
+  const idCheckResponse = (result: ResponseDto | null) => {
+
+    const idMessage = 
+      !result ? '서버에 문제가 있습니다.' : 
+      result.code === 'VF' ? '아이디는 빈 값 혹은 공백으로만 이루어질 수 없습니다.' :
+      result.code === 'DI' ? '이미 사용중인 아이디 입니다.' :
+      result.code === 'DBE' ? '서버에 접근할 수 없습니다.' :
+      result.code === 'SU' ? '사용 가능한 아이디입니다.' : '';
+    const idError = !(result && result.code === 'SU');
+    const idCheck = !idError;
+
+    setIdMessage(idMessage);
+    setIsIdError(idError);
+    setIsIdCheck(idCheck);
+
+};
 
   //          event handler          //
   const onIdChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -174,17 +193,10 @@ function SignUp ({onLinkClickHandler}: Props) {
 
   const onIdButtonClickHandler = () => {
     if(!idButtonStatus) return;
-    if(!id || !id.trim()) return; 
+    // if(!id || !id.trim()) return;
 
     const requsetBody: IdCheckRequsetDto = { userId: id };
-    idCheckRequest(requsetBody);
-
-    // const idCheck = id !== 'admin';
-    // setIsIdCheck(idCheck);
-    // setIsIdError(!idCheck);
-
-    // const idMessage = idCheck ? '사용 가능한 아이디 입니다.' : '이미 사용중인 아이디 입니다.'
-    // setIdMessage(idMessage);
+    idCheckRequest(requsetBody).then(idCheckResponse);
   };  
   const onEmailButtonClickHandler = () => {
     if(!emailButtonStatus) return;
