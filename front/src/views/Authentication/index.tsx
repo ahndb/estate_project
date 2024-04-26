@@ -4,6 +4,8 @@ import './style.css';
 import SignInBackground from 'src/assets/image/sign-in-background.png';
 import SignUpBackground from 'src/assets/image/sing-up-background-image.png';
 import InputBox from 'src/components/Inputbox';
+import { IdCheckRequsetDto } from 'src/apis/auth/dto/request';
+import { idCheckRequest } from 'src/apis/auth';
 
 
 type AuthPage = 'sign-in' | 'sign-up';
@@ -172,13 +174,17 @@ function SignUp ({onLinkClickHandler}: Props) {
 
   const onIdButtonClickHandler = () => {
     if(!idButtonStatus) return;
+    if(!id || !id.trim()) return; 
 
-    const idCheck = id !== 'admin';
-    setIsIdCheck(idCheck);
-    setIsIdError(!idCheck);
+    const requsetBody: IdCheckRequsetDto = { userId: id };
+    idCheckRequest(requsetBody);
 
-    const idMessage = idCheck ? '사용 가능한 아이디 입니다.' : '이미 사용중인 아이디 입니다.'
-    setIdMessage(idMessage);
+    // const idCheck = id !== 'admin';
+    // setIsIdCheck(idCheck);
+    // setIsIdError(!idCheck);
+
+    // const idMessage = idCheck ? '사용 가능한 아이디 입니다.' : '이미 사용중인 아이디 입니다.'
+    // setIdMessage(idMessage);
   };  
   const onEmailButtonClickHandler = () => {
     if(!emailButtonStatus) return;
@@ -242,9 +248,10 @@ function SignUp ({onLinkClickHandler}: Props) {
   )
 };
 
+//           component           //
 export default function Authentication() {
 
-  const [page, setPage] = useState<AuthPage>('sign-in'); //useState는 컴포넌트 내부에 선언되어야 함
+  const [page, setPage] = useState<AuthPage>('sign-up'); //useState는 컴포넌트 내부에 선언되어야 함
 
   const onLinkClickHandler = () => {
     if  (page === 'sign-in') setPage('sign-up');
@@ -258,6 +265,7 @@ export default function Authentication() {
 
   const imageBoxStyle = { backgroundImage: `url(${page === 'sign-in' ? SignInBackground : SignUpBackground})`}
 
+  //              render             //
   return (
     <div id="authentication-wrapper">
       <div 
