@@ -4,8 +4,8 @@ import './style.css';
 import SignInBackground from 'src/assets/image/sign-in-background.png';
 import SignUpBackground from 'src/assets/image/sing-up-background-image.png';
 import InputBox from 'src/components/Inputbox';
-import { EmailAuthCheckRequsetDto, EmailAuthRequsetDto, IdCheckRequsetDto } from 'src/apis/auth/dto/request';
-import { emailAuthCheckRequest, emailAuthRequest, idCheckRequest } from 'src/apis/auth';
+import { EmailAuthCheckRequsetDto, EmailAuthRequsetDto, IdCheckRequsetDto, SignUpRequsetDto } from 'src/apis/auth/dto/request';
+import { emailAuthCheckRequest, emailAuthRequest, idCheckRequest, signUpRequest } from 'src/apis/auth';
 import ResponseDto from 'src/apis/response.dto';
 
 
@@ -160,15 +160,34 @@ const emailAuthCheckResponse = (result: ResponseDto | null) => {
   
   const authNumberMessage =
       !result ? '서버에 문제가 있습니다.':
-      result.code === 'VF' ? '필수 입력값 입니다.' :
+      result.code === 'VF' ? '인증번호를 입력해주세요.' :
       result.code === 'AF' ? '인증번호가 일치하지 않습니다.' :
       result.code === 'DBE' ? '서버에 문제가 있습니다.':
       result.code === 'SU' ? '인증번호가 확인되었습니다.' : '';
     const authNumberCheck = result !== null && result.code === 'SU';
-    const authNumberCheckError = !authNumberCheck;
-    
-  
+    const authNumberError = !authNumberCheck;
 
+    setAuthNumberMessage(authNumberMessage);
+    setIsAuthNumberCheck(authNumberCheck);
+    setIsAuthNumberError(authNumberError);
+};
+
+const signUpResponse = (result: ResponseDto | null) => {
+
+  const message = 
+    !result ? '서버에 문제가 있습니다.' :
+    result.code === 'VF' ? '입력형식이 맞지 않습니다.' :
+    result.code === 'DI' ? '이미 사용중인 아이디입니다.' :
+    result.code === 'DE' ? '중복된 이메일입니다.' :
+    result.code === 'AF' ? '인증번호가 일치하지 않습니다.' :
+    result.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+  const isSuccess = result && result.code === 'SU'
+  if (!isSuccess) {
+    alert(message);
+    return;
+  } 
+  onLinkClickHandler();
 };
 
   //          event handler          //
@@ -190,8 +209,8 @@ const emailAuthCheckResponse = (result: ResponseDto | null) => {
       value ? '영문, 숫자를 혼용하여 8 ~ 13자 입력해주세요.' : '';
     setPasswordMessage(passwordMessage);
 
-    const isEqulPassword = passwordCheck === value
-    const passwordCheckMessage = isEqulPassword ? '': 
+    const isEqaulPassword = passwordCheck === value
+    const passwordCheckMessage = isEqaulPassword ? '': 
       passwordCheck ? '비밀번호가 일치하지 않습니다.' : '';
     setIsEqaulPassword(isEqaulPassword);
     setPasswordCheckMessage(passwordCheckMessage);
@@ -201,8 +220,8 @@ const emailAuthCheckResponse = (result: ResponseDto | null) => {
   const onPasswordCheckChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const {value} = event.target;
     setPasswordCheck(value);
-    const isEqulPassword = password === value
-    const passwordCheckMessage = isEqulPassword ? '': 
+    const isEqaulPassword = password === value
+    const passwordCheckMessage = isEqaulPassword ? '': 
     passwordCheck ? '비밀번호가 일치하지 않습니다.' : '';
     setIsEqaulPassword(isEqaulPassword);
     setPasswordCheckMessage(passwordCheckMessage);
@@ -242,10 +261,8 @@ const emailAuthCheckResponse = (result: ResponseDto | null) => {
       setIsEmailCheck(false);  
       return;
     }
-    
     const requestBody: EmailAuthRequsetDto = { userEmail : email};
     emailAuthRequest(requestBody).then(emailAuthResponse);
-
   };
 
   const onAuthNumberButtonClickHandler = () => {
@@ -257,24 +274,22 @@ const emailAuthCheckResponse = (result: ResponseDto | null) => {
       authNumber
     };
     emailAuthCheckRequest(requsetBody).then(emailAuthCheckResponse);
-
-    // const authNumberCheck = authNumber === '1234';
-    // setIsAuthNumberCheck(authNumberCheck);
-    // setIsAuthNumberError(!authNumberCheck);
-
-    // const authNumberMessage = authNumberCheck ? '인증번호가 확인되었습니다' : '인증번호가 일치하지 않습니다.'
-    // setAuthNumberMessage(authNumberMessage)
   };  
 
   const onSignUpButtonClickHandler = () => {
     if(!isSignUpActive) return;
-    alert(`아이디 : ${id} / 비밀번호 : ${password} / 비밀번호 확인 : ${passwordCheck} / 이메일 : ${email} / 인증번호: ${authNumber} ` );
-    setId('');
-    setPassword('');
-    setPasswordCheck('');
-    setEmail('');
-    setAuthNumber('');
-    alert(`아이디 : ${id} / 비밀번호 : ${password} / 비밀번호 확인 : ${passwordCheck} / 이메일 : ${email} / 인증번호: ${authNumber} ` );
+    if(!id || !password || !passwordCheck || !email || !authNumber) {
+      alert('모든 내용을 입력해주세요.')
+      return;
+    };
+
+    const requestBody: SignUpRequsetDto = {
+      userId: id,
+      userPassword: password,
+      userEmail: email,
+      authNumber
+    };
+    signUpRequest(requestBody).then(signUpResponse);
   };
 
   //          render          //
