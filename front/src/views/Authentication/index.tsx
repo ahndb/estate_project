@@ -4,8 +4,8 @@ import './style.css';
 import SignInBackground from 'src/assets/image/sign-in-background.png';
 import SignUpBackground from 'src/assets/image/sing-up-background-image.png';
 import InputBox from 'src/components/Inputbox';
-import { EmailAuthRequsetDto, IdCheckRequsetDto } from 'src/apis/auth/dto/request';
-import { emailAuthRequest, idCheckRequest } from 'src/apis/auth';
+import { EmailAuthCheckRequsetDto, EmailAuthRequsetDto, IdCheckRequsetDto } from 'src/apis/auth/dto/request';
+import { emailAuthCheckRequest, emailAuthRequest, idCheckRequest } from 'src/apis/auth';
 import ResponseDto from 'src/apis/response.dto';
 
 
@@ -156,6 +156,21 @@ const emailAuthResponse = (result: ResponseDto | null) => {
     setIsEmailError(emailError);
 };
 
+const emailAuthCheckResponse = (result: ResponseDto | null) => {
+  
+  const authNumberMessage =
+      !result ? '서버에 문제가 있습니다.':
+      result.code === 'VF' ? '필수 입력값 입니다.' :
+      result.code === 'AF' ? '인증번호가 일치하지 않습니다.' :
+      result.code === 'DBE' ? '서버에 문제가 있습니다.':
+      result.code === 'SU' ? '인증번호가 확인되었습니다.' : '';
+    const authNumberCheck = result !== null && result.code === 'SU';
+    const authNumberCheckError = !authNumberCheck;
+    
+  
+
+};
+
   //          event handler          //
   const onIdChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
     const {value} = event.target;
@@ -235,13 +250,20 @@ const emailAuthResponse = (result: ResponseDto | null) => {
 
   const onAuthNumberButtonClickHandler = () => {
     if(!authNumberButtonStatus) return;
-    
-    const authNumberCheck = authNumber === '1234';
-    setIsAuthNumberCheck(authNumberCheck);
-    setIsAuthNumberError(!authNumberCheck);
+    if(!authNumber) return;
 
-    const authNumberMessage = authNumberCheck ? '인증번호가 확인되었습니다' : '인증번호가 일치하지 않습니다.'
-    setAuthNumberMessage(authNumberMessage)
+    const requsetBody: EmailAuthCheckRequsetDto = { 
+      userEmail: email,
+      authNumber
+    };
+    emailAuthCheckRequest(requsetBody).then(emailAuthCheckResponse);
+
+    // const authNumberCheck = authNumber === '1234';
+    // setIsAuthNumberCheck(authNumberCheck);
+    // setIsAuthNumberError(!authNumberCheck);
+
+    // const authNumberMessage = authNumberCheck ? '인증번호가 확인되었습니다' : '인증번호가 일치하지 않습니다.'
+    // setAuthNumberMessage(authNumberMessage)
   };  
 
   const onSignUpButtonClickHandler = () => {
