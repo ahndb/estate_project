@@ -352,7 +352,7 @@ const signUpResponse = (result: ResponseDto | null) => {
 //           component           //
 export default function Authentication() {
 
-  const [page, setPage] = useState<AuthPage>('sign-up'); //useState는 컴포넌트 내부에 선언되어야 함
+  const [page, setPage] = useState<AuthPage>('sign-in'); //useState는 컴포넌트 내부에 선언되어야 함
 
   const onLinkClickHandler = () => {
     if  (page === 'sign-in') setPage('sign-up');
