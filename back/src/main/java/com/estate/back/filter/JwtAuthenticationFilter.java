@@ -69,7 +69,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       authorities.add(new SimpleGrantedAuthority(role));
 
       // Context에 접근 주체 정보를 추가
-      AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null, authorities);
+      AbstractAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null,
+          authorities);
       authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
       SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
@@ -88,7 +89,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private String parseBearerToken(HttpServletRequest request) {
 
     // request 객체의 header에서 Authoization 필드 값 추출
-    String authoization = request.getHeader("Authoization");
+    String authoization = request.getHeader("Authorization");
     // Authoization 필드값 존재 여부 확인
     boolean hasAuthorization = StringUtils.hasText(authoization);
     if (!hasAuthorization)
