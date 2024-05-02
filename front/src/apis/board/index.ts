@@ -9,4 +9,5 @@ export const PostBoardRequest = async (requstBody: PostBoardRequestDto, accessTo
   const result = await axios.post(POST_BOARD_REQUEST_URL, requstBody, bearerAuthorization(accessToken))
     .then(requestHandler<ResponseDto>)
     .catch(requestErrorHandler);
+  return result;
 };

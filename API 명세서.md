@@ -665,7 +665,7 @@ Q&A 게시물과 관련된 REST API 모듈
 ###### Example
 
 ```bash
-curl -v -X POST "http://localhost:4000/api/v1/Board/" \
+curl -v -X POST "http://localhost:4000/api/v1/board/" \
  -H "Authorization: Bearer {JWT}"
  -d "title={title}" \
  -d "contents={contents}"
@@ -731,6 +731,184 @@ Content-Type: application/json;charset=UTF-8
 {
   "code": "AF",
   "message": "Authentication Failed."
+}
+```
+
+**응답 : 실패 (데이터베이스 오류)**
+
+```bash
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json;charset=UTF-8
+{
+  "code": "DBE",
+  "message": "Database Error."
+}
+```
+
+---
+
+<h2 style='background-color: rgba(55, 55, 55, 0.2); text-align: center'>Board 모듈</h2>
+
+Q&A 게시물과 관련된 REST API 모듈
+
+- url : /api/v1/board
+
+---
+
+#### - Q&A 전체 게시물 리스트 불러오기
+
+##### 설명
+
+클라이언트로부터 Request Header의 Authorization 필드로 Bearer 토큰을 포함하여 요청을 보내면 작성일 기준 내림차순으로 게시물 리스트를 반환합니다. 만약 불러오기에 실패하면 실패처리를 합니다. 인가 실패, 데이터베이스 에러가 발생할 수 있습니다.
+
+- method : **GET**
+- URL : **/list**
+
+##### Request
+
+###### Header
+
+| name          |        description        | required |
+| ------------- | :-----------------------: | :------: |
+| Authorization | 인증에 사용될 Bearer 토큰 |    O     |
+
+###### Example
+
+```bash
+curl -v -X GET "http://localhost:4000/api/v1/board/list" \
+ -H "Authorization: Bearer {JWT}"
+```
+
+##### Response
+
+###### Header
+
+| name         |                       description                        | required |
+| ------------ | :------------------------------------------------------: | :------: |
+| Content-Type | 반환하는 Response Body의 Content Type (application/json) |    O     |
+
+###### Response Body
+
+| name     |  type  |   description   | required |
+| -------- | :----: | :-------------: | :------: |
+| code     | String |    응답 코드    |    O     |
+
+<h2 style='background-color: rgba(55, 55, 55, 0.2); text-align: center'>Board 모듈</h2>
+
+Q&A 게시물과 관련된 REST API 모듈
+
+- url : /api/v1/board
+
+---
+
+#### - Q&A 게시물 작성
+
+##### 설명
+
+클라이언트로부터 Request Header의 Authorization 필드로 Bearer 토큰을 포함하여 제목, 내용을 입력받고 작성에 성공하면 성공처리를 합니다. 만약 작성에 실패하면 실패처리 됩니다. 인가 실패, 데이터베이스 에러, 데이터 유효성 검사 실패가 발생할 수 있습니다.  
+
+- method : **POST**
+- URL : **/**
+
+##### Request
+
+###### Header
+
+| name          |        description        | required |
+| ------------- | :-----------------------: | :------: |
+| Authorization | 인증에 사용될 Bearer 토큰 |    O     |
+
+###### Request Body
+
+| name     |  type  |   description   | required |
+| -------- | :----: | :-------------: | :------: |
+| title     | String |    Q&A 제목    |    O     |
+| contents  | String |   Q&A 내용     |    O     |
+
+###### Example
+
+```bash
+curl -v -X POST "http://localhost:4000/api/v1/Board/" \
+ -H "Authorization: Bearer {JWT}"
+ -d "title={title}" \
+ -d "contents={contents}"
+```
+
+##### Response
+
+###### Header
+
+| name         |                       description                        | required |
+| ------------ | :------------------------------------------------------: | :------: |
+| Content-Type | 반환하는 Response Body의 Content Type (application/json) |    O     |
+
+###### Response Body
+
+| name       |  type           |   description       | required |
+| ---------- | :-------------: | :-----------------: | :------: |
+| code       | String          |    응답 코드        |    O     |
+| message    | String          |   응답 메시지       |    O     |
+| boardList  | BoardListItem[] |  Q&A 게시물 리스트  |    O     |
+
+**BoardListItem**
+| name            |  type    |   description                                       | required |
+| --------------- | :------: | :-------------------------------------------------: | :------: |
+| receptionNumber |   int    |  접수 번호                                          |    O     |
+| status          | boolean  |  상태                                               |    O     |
+| title           | sting    |  제목                                               |    O     |
+| writerId        | sting    |  작성자 아이디</br>(첫글자를 제외한 너머지 문자는 *) |    O     |
+| writeDatetime   | sting    |  작성일                                             |    O     |
+| viewCount       | sting    |  조회수                                             |    O     |
+
+
+###### Example
+
+**응답 성공**
+
+```bash
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+{
+  "code": "SU",
+  "message": "Success.",
+  "boardList":[
+    {
+      "receptionNumber: 1,
+      "status": false,
+      "title": "테스트1",
+      "writerId": "테스트1",
+      "writeDatetime": "24.05.02",
+      "viewCount": 0
+    }, ...
+  ]
+}
+```
+
+---
+
+###### Example
+
+**응답 성공**
+
+```bash
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+{
+  "code": "SU",
+  "message": "Success.",
+  "userId": "${userId}",
+  "userRole": "${userRole}"
+}
+```
+
+**응답 : 실패 (인가 실패)**
+
+```bash
+HTTP/1.1 403 Forbidden
+Content-Type: application/json;charset=UTF-8
+{
+  "code": "AF",
+  "message": "Authorization Failed."
 }
 ```
 

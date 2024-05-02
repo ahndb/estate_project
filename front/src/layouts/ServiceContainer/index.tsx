@@ -104,6 +104,8 @@ export default function ServiceContainer() {
   const [path, setPath] = useState<Path>("");
 
   //                    function                    //
+  const navigator = useNavigate();
+
   const getSignInUserResponse = (
     result: GetSignInUserResponseDto | ResponseDto | null
   ) => {
@@ -117,6 +119,7 @@ export default function ServiceContainer() {
 
     if (!result || result.code !== "SU") {
       alert(message);
+      navigator(AUTH_ABSOLUTE_PATH);
       return;
     }
 
@@ -141,8 +144,10 @@ export default function ServiceContainer() {
 
   useEffect(() => {
     if (!cookies.accessToken) {
+      navigator(AUTH_ABSOLUTE_PATH);
       return;
     }
+ 
 
     getSignInUserRequest(cookies.accessToken).then(getSignInUserResponse);
   }, [cookies.accessToken]);
