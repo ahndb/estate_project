@@ -11,6 +11,9 @@ import com.estate.back.dto.response.ResponseDto;
 import com.estate.back.dto.response.ResponseMessage;
 import com.estate.back.entity.BoardEntity;
 
+import lombok.Getter;
+
+@Getter
 public class GetBoardListResponseDto extends ResponseDto {
 
   private List<BoadListItem> boardList;
@@ -19,10 +22,10 @@ public class GetBoardListResponseDto extends ResponseDto {
     super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
     this.boardList = BoadListItem.getList(boardEntities);
   }
-  
-  public static ResponseEntity<GetBoardListResponseDto> success (List<BoardEntity> boardEntities) throws Exception {
+
+  public static ResponseEntity<GetBoardListResponseDto> success(List<BoardEntity> boardEntities) throws Exception {
     GetBoardListResponseDto responseBody = new GetBoardListResponseDto(boardEntities);
     return ResponseEntity.status(HttpStatus.OK).body(responseBody);
   }
-  
+
 }
