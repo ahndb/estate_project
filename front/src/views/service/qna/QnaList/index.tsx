@@ -10,6 +10,7 @@ export default function QnaList() {
   //                       state                   //
   const {loginUserRole} = useUserStore();
 
+
   const [totalLength, setTotalLength] = useState<number>(0);
   const [totalPage, setTotalPage] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -72,7 +73,7 @@ export default function QnaList() {
       </div>
       
       <div className='qna-list-bottom'>
-        <div></div>
+        <div style={{ width:'299px' }}></div>
         <div className='qna-list-pagenation'>
             <div className='qna-list-page-left'></div>
             <div className='qna-list-page-box'>
