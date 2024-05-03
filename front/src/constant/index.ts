@@ -15,9 +15,9 @@ export const LOCAL_ABSOLUTE_PATH = `${SERVICE_PATH}/${LOCAL_PATH}`;
 export const RATIO_ABSOLUTE_PATH = `${SERVICE_PATH}/${RATIO_PATH}`;
 export const QNA_LIST_ABSOLUTE_PATH = `${SERVICE_PATH}/${QNA_PATH}`;
 export const QNA_WRITE_ABSOLUTE_PATH = `${SERVICE_PATH}/${QNA_PATH}/${QNA_WRITE_PATH}`;
-export const QNA_DEATIL_ABSOLUTE_PATH = (receptionNumber: string) =>
+export const QNA_DEATIL_ABSOLUTE_PATH = (receptionNumber: number) =>
   `${SERVICE_PATH}/${QNA_PATH}/${receptionNumber}`;
-export const QNA_UPDATE_ABSOLUTE_PATH = (receptionNumber: string) =>
+export const QNA_UPDATE_ABSOLUTE_PATH = (receptionNumber: string | number) =>
   `${SERVICE_PATH}/${QNA_PATH}/update/${receptionNumber}`;
 
 // description: API URL PATH
@@ -42,3 +42,6 @@ export const POST_BOARD_REQUEST_URL = `${SERVER_BOARD_MODULE_URL}/`;
 export const GET_BOARD_LIST_URL = `${SERVER_BOARD_MODULE_URL}/list`;
 export const GET_SEARCH_BOARD_LIST_URL = (searchWord: string) => `${GET_BOARD_LIST_URL}/${searchWord}`;
 
+// description: 게시물 상수
+export const COUNT_PER_PAGE = 10;
+export const COUNT_PER_SECTION = 10;

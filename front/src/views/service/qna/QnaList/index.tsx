@@ -1,8 +1,51 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './style.css'
 import { useUserStore } from 'src/stores';
 import { useNavigate } from 'react-router';
-import { QNA_WRITE_ABSOLUTE_PATH } from 'src/constant';
+import { AUTH_ABSOLUTE_PATH, COUNT_PER_PAGE, COUNT_PER_SECTION, QNA_DEATIL_ABSOLUTE_PATH, QNA_WRITE_ABSOLUTE_PATH } from 'src/constant';
+import { BoardListItem } from 'src/types';
+import { GetBoardListResquest } from 'src/apis/board';
+import { useCookies } from 'react-cookie';
+import { GetBoardListResponseDto } from 'src/apis/board/dto/response';
+import ResponseDto from 'src/apis/response.dto';
+
+//                    component                     //
+function ListItem ({
+  receptionNumber, 
+  status, 
+  title, 
+  writerId,
+  writeDatetime, 
+  viewCount}
+  : BoardListItem) {
+    
+  //                    function                       //
+  const navigator = useNavigate();
+
+
+  //                    event handler                       //
+  const onClickHandler = () => navigator(QNA_DEATIL_ABSOLUTE_PATH(receptionNumber));
+
+  //                    render                       //
+  return (
+    <div className='qna-list-table-tr' onClick={onClickHandler}>
+      <div className='qna-list-table-reception-number'>{receptionNumber}</div>
+      <div className='qna-list-table-status'>
+        {status ?
+          <div className='disable-bedge'>접수</div> :
+          <div className='primary-bedge'>접수</div>
+        }
+        
+      </div>
+      <div className='qna-list-table-title' style={{ textAlign:'left' }}>{title}</div>
+      <div className='qna-list-table-writer-id'>{writerId}</div>
+      <div className='qna-list-table-write-date'>{writeDatetime}</div>
+      <div className='qna-list-table-viewcount'>{viewCount}</div>
+    </div>
+  );
+}
+
+
 
 //                    component                     //
 export default function QnaList() {
@@ -10,25 +53,87 @@ export default function QnaList() {
   //                       state                   //
   const {loginUserRole} = useUserStore();
 
+  const [cookies] = useCookies();
 
+  const [boardList, setBoardList] = useState<BoardListItem[]>([]);
+  const [viewList, setViewList] =useState<BoardListItem[]>([]);
   const [totalLength, setTotalLength] = useState<number>(0);
-  const [totalPage, setTotalPage] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [totalPage, setTotalPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageList, setPageList] = useState<number[]>([1]);  // [1, 2, 3, 4]
+  const [totalSection, setTotalSection] = useState<number>(1);
+  const [currentSection, setCurrentSection] = useState<number>(1);
   const [isToggleOn, setToggleOn] = useState<boolean>(false);
 
   //                 function                 //
   const navigator = useNavigate();
 
+  const changePage = (boardList: BoardListItem[]) => {
+    const startIndex = (currentPage - 1) * COUNT_PER_PAGE;
+    let endIndex = currentPage * COUNT_PER_PAGE; 
+    if (endIndex > totalLength - 1) endIndex = totalLength;
+    const viewList = boardList.slice(startIndex, endIndex);
+    setViewList(viewList);
+  }; 
+  
+  const GetBoardListResponse = (result: GetBoardListResponseDto | ResponseDto | null) => {
+    const message = 
+      !result ? '서버에 문제가 있습니다.' :
+      result.code === 'AF' ? '인증에 실패했습니다.' :
+      result.code === 'DBE' ? '서버에 문제가 있습니다.' : '';
+
+    if (!result || result.code !=='SU') {
+      alert(message);
+      if(result?.code === 'AF') navigator(AUTH_ABSOLUTE_PATH);
+      return;
+    }
+    
+    const {boardList} = result as GetBoardListResponseDto;
+    setBoardList(boardList);
+    
+    const totalLength = boardList.length;
+    setTotalLength(totalLength);
+
+    const totalPage = Math.floor((totalLength -1) / COUNT_PER_PAGE) + 1;
+    setTotalPage(totalPage);
+
+    const totalSection = Math.floor((totalPage -1) / COUNT_PER_SECTION) + 1;
+    setTotalSection(totalSection);
+
+    changePage(boardList);
+
+    const startPage = (currentSection * COUNT_PER_SECTION) - (COUNT_PER_SECTION - 1);
+    let endPage = currentSection * COUNT_PER_SECTION;
+    if (endPage > totalPage) endPage = totalPage;
+    const pageList: number[] = [];
+    for (let page = startPage; page <= endPage; page++) pageList.push(page);
+    setPageList(pageList);
+  };
+
   //                 event handler                 //
   const onWriteButtonClickHandler = () => {
     if (loginUserRole !== 'ROLE_USER') return;
     navigator(QNA_WRITE_ABSOLUTE_PATH);
-  }
+  };
 
   const onToggleClickHandler = () => {
     if (loginUserRole !== 'ROLE_ADMIN') return;
     setToggleOn(!isToggleOn);
-  }
+  };
+
+  const onPageClickHandler = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  //                      effect                    //
+  useEffect(() => {
+    if(!cookies.accessToken) return;
+    GetBoardListResquest(cookies.accessToken).then(GetBoardListResponse);
+  },[])
+
+  useEffect(() => {
+    changePage(boardList);
+  }, [])
 
   //                    render                     //
   const toggleClass = isToggleOn ? 'toggle-active' : 'toggle';
@@ -60,16 +165,7 @@ export default function QnaList() {
           <div className='qna-list-table-write-date'>작성일</div>
           <div className='qna-list-table-viewcount'>조회수</div>
         </div>
-        <div className='qna-list-table-tr'>
-          <div className='qna-list-table-reception-number'>접수번호</div>
-          <div className='qna-list-table-status'>
-            <div className='primary-bedge'>접수</div>
-          </div>
-          <div className='qna-list-table-title' style={{ textAlign:'left' }}>제목</div>
-          <div className='qna-list-table-writer-id'>작성자</div>
-          <div className='qna-list-table-write-date'>작성일</div>
-          <div className='qna-list-table-viewcount'>조회수</div>
-        </div>
+        {viewList.map(item => <ListItem{...item} />)}
       </div>
       
       <div className='qna-list-bottom'>
@@ -77,8 +173,12 @@ export default function QnaList() {
         <div className='qna-list-pagenation'>
             <div className='qna-list-page-left'></div>
             <div className='qna-list-page-box'>
-              <div className='qna-list-page-active'>1</div>
-              <div className='qna-list-page'>1</div>
+              {pageList.map(page => 
+              page === currentPage ? 
+              <div className='qna-list-page-active'>{page}</div> :
+              <div className='qna-list-page' onClick={() => onPageClickHandler}>{page}</div>
+              )}
+              
             </div>
             <div className='qna-list-page-right'></div>
         </div>
