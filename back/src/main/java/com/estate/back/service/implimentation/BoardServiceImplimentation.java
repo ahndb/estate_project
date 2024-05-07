@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.estate.back.dto.request.board.PostBoardRequestDto;
 import com.estate.back.dto.response.ResponseDto;
 import com.estate.back.dto.response.board.GetBoardListResponseDto;
+import com.estate.back.dto.response.board.GetBoardResponseDto;
 import com.estate.back.dto.response.board.GetSearchBoardListResponseDto;
 import com.estate.back.entity.BoardEntity;
 import com.estate.back.repository.BoardRepository;
@@ -70,6 +71,20 @@ public class BoardServiceImplimentation implements BoardService {
       return ResponseDto.databaseError();
     }
     
+  }
+
+  @Override
+  public ResponseEntity<? super GetBoardResponseDto> getBoard(int receptionNumber) {
+
+    try {
+      
+      List<BoardEntity> board = boardRepository.findByTitleContainsOrderByReceptionNumberDesc(receptionNumber);
+      return GetBoardResponseDto.success(board);
+      
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      return ResponseDto.databaseError();
+    }
   }
   
 }
