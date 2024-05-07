@@ -38,7 +38,7 @@ export const getBoardRequest = async (receptionNumber: number | string, accessTo
 };
 
 // function: Q&A 게시물 조회수 증가 API 함수 
-export const increaseViewCount = async (receptionNumber: number | string, accessToken: string) => {
+export const increaseViewCountRequest = async (receptionNumber: number | string, accessToken: string) => {
     const result = await axios.patch(INCREASE_VIEW_COUNL_URL(receptionNumber), {}, bearerAuthorization(accessToken))
         .then(requestHandler<ResponseDto>)
         .catch(requestErrorHandler);
