@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.estate.back.dto.request.board.PostBoardRequestDto;
@@ -53,10 +54,10 @@ public class BoardController {
     return response;
   }
 
-  @GetMapping("/list/{searchWord}")
+  @GetMapping("/list/search")
   public ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList(
-      @PathVariable("searchWord") String searchWord) {
-    ResponseEntity<? super GetSearchBoardListResponseDto> response = boardService.getSearchBoardList(searchWord);
+      @RequestParam("word") String word) {
+    ResponseEntity<? super GetSearchBoardListResponseDto> response = boardService.getSearchBoardList(word);
     return response;
   }
 
@@ -69,10 +70,9 @@ public class BoardController {
 
   @PutMapping("/{receptionNumber}")
   public ResponseEntity<ResponseDto> putBoard(
-    @RequestBody @Valid PutBoardRequestDto requestBody,
-    @PathVariable("receptionNumber") int receptionNumber,
-    @AuthenticationPrincipal String userId
-    ) {
+      @RequestBody @Valid PutBoardRequestDto requestBody,
+      @PathVariable("receptionNumber") int receptionNumber,
+      @AuthenticationPrincipal String userId) {
     ResponseEntity<ResponseDto> response = boardService.putBoard(requestBody, receptionNumber, userId);
     return response;
   }

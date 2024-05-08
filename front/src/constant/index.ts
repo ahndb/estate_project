@@ -43,8 +43,7 @@ export const POST_COMMENT_REQUEST_URL = (receptionNumber: number | string) =>
   `${SERVER_BOARD_MODULE_URL}/${receptionNumber}/comment`;
 
 export const GET_BOARD_LIST_URL = `${SERVER_BOARD_MODULE_URL}/list`;
-export const GET_SEARCH_BOARD_LIST_URL = (searchWord: string) =>
-  `${GET_BOARD_LIST_URL}/${searchWord}`;
+export const GET_SEARCH_BOARD_LIST_URL = `${SERVER_BOARD_MODULE_URL}/list/search`;
 export const GET_BOARD_URL = (receptionNumber: number | string) =>
   `${SERVER_BOARD_MODULE_URL}/${receptionNumber}`;
 export const PUT_BOARD_URL = (receptionNumber: number | string) => `${SERVER_BOARD_MODULE_URL}/${receptionNumber}`;

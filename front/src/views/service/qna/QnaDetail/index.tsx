@@ -194,7 +194,7 @@ export default function QnaDetail() {
       }
       <div className="qna-detail-button-box">
         <div className="primary-button" onClick={onListClickHandler}>목록 보기</div>
-        {loginUserId === writerId &&
+        {loginUserId === writerId && loginUserRole === 'ROLE_USER' &&
         <div className="qna-detail-owner-button-box">
           {!status && <div className="second-button" onClick={onUpdateClickHandler}>수정</div>}
           

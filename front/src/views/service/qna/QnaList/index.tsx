@@ -78,6 +78,7 @@ export default function QnaList() {
   const navigator = useNavigate();
 
   const changePage = (boardList: BoardListItem[], totalLenght: number) => {
+    if (!currentPage) return;
     const startIndex = (currentPage - 1) * COUNT_PER_PAGE;
     let endIndex = currentPage * COUNT_PER_PAGE;
     if (endIndex > totalLenght - 1) endIndex = totalLenght;
@@ -86,6 +87,7 @@ export default function QnaList() {
   };
 
   const changeSection = (totalPage: number) => {
+    if (!currentSection) return;
     const startPage =
       currentSection * COUNT_PER_SECTION - (COUNT_PER_SECTION - 1);
     let endPage = currentSection * COUNT_PER_SECTION;
