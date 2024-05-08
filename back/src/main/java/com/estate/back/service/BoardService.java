@@ -14,8 +14,12 @@ public interface BoardService {
   
   ResponseEntity<ResponseDto> postBoard(PostBoardRequestDto dto, String userId);
   ResponseEntity<ResponseDto> postComment(PostCommentRequestDto requestBody, int receptionNumber);
+
   ResponseEntity<? super GetBoardListResponseDto> getBoardList();
   ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList(String searchWord);
   ResponseEntity<? super GetBoardResponseDto> getBoard(int receptionNumber);
+
   ResponseEntity<ResponseDto> increaseViewCount(int receptionNumber);
+
+  ResponseEntity<ResponseDto> deleteBoard(int receptionNumber, String userId);
 }

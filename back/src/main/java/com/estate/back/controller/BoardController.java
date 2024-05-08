@@ -2,6 +2,7 @@ package com.estate.back.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,53 +28,56 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
   private final BoardService boardService;
-  
+
   @PostMapping("/")
-  public ResponseEntity<ResponseDto> postBoard (
-    @RequestBody @Valid PostBoardRequestDto requestBody, 
-    @AuthenticationPrincipal String userId
-  ) {
+  public ResponseEntity<ResponseDto> postBoard(
+      @RequestBody @Valid PostBoardRequestDto requestBody,
+      @AuthenticationPrincipal String userId) {
     ResponseEntity<ResponseDto> response = boardService.postBoard(requestBody, userId);
-    return response; 
+    return response;
   }
 
   @PostMapping("/{receptionNumber}/comment")
-  public ResponseEntity<ResponseDto> postComment (
-    @RequestBody @Valid PostCommentRequestDto requestBody, 
-    @PathVariable("receptionNumber") int receptionNumber
-  ) {
+  public ResponseEntity<ResponseDto> postComment(
+      @RequestBody @Valid PostCommentRequestDto requestBody,
+      @PathVariable("receptionNumber") int receptionNumber) {
     ResponseEntity<ResponseDto> response = boardService.postComment(requestBody, receptionNumber);
     return response;
   }
 
   @GetMapping("/list")
-  public ResponseEntity<? super GetBoardListResponseDto> getBoardList () {
+  public ResponseEntity<? super GetBoardListResponseDto> getBoardList() {
     ResponseEntity<? super GetBoardListResponseDto> response = boardService.getBoardList();
     return response;
   }
 
   @GetMapping("/list/{searchWord}")
-  public ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList (
-    @PathVariable("searchWord") String searchWord
-  ) {
+  public ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList(
+      @PathVariable("searchWord") String searchWord) {
     ResponseEntity<? super GetSearchBoardListResponseDto> response = boardService.getSearchBoardList(searchWord);
     return response;
   }
 
   @GetMapping("/{receptionNumber}")
-  public ResponseEntity<? super GetBoardResponseDto> getBoard (
-    @PathVariable("receptionNumber") int receptionNumber
-  ) {
+  public ResponseEntity<? super GetBoardResponseDto> getBoard(
+      @PathVariable("receptionNumber") int receptionNumber) {
     ResponseEntity<? super GetBoardResponseDto> response = boardService.getBoard(receptionNumber);
     return response;
   }
 
   @PatchMapping("/{receptionNumber}/increase-view-count")
-  public ResponseEntity<ResponseDto> increaseViewCount (
-    @PathVariable("receptionNumber") int receptionNumber
-  ) {
+  public ResponseEntity<ResponseDto> increaseViewCount(
+      @PathVariable("receptionNumber") int receptionNumber) {
     ResponseEntity<ResponseDto> response = boardService.increaseViewCount(receptionNumber);
     return response;
   }
-  
+
+  @DeleteMapping("/{receptionNumber}")
+  public ResponseEntity<ResponseDto> deleteBoard(
+      @PathVariable("receptionNumber") int receptionNumber,
+      @AuthenticationPrincipal String userId) {
+    ResponseEntity<ResponseDto> response = boardService.deleteBoard(receptionNumber, userId);
+    return response;
+  }
+
 }

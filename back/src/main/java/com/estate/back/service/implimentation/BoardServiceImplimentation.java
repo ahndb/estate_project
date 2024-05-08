@@ -80,7 +80,8 @@ public class BoardServiceImplimentation implements BoardService {
     try {
 
       BoardEntity boardEntity = boardRepository.findByReceptionNumber(receptionNumber);
-      if (boardEntity == null) return ResponseDto.noExistBoard();
+      if (boardEntity == null)
+        return ResponseDto.noExistBoard();
 
       return GetBoardResponseDto.success(boardEntity);
 
@@ -92,11 +93,12 @@ public class BoardServiceImplimentation implements BoardService {
 
   @Override
   public ResponseEntity<ResponseDto> increaseViewCount(int receptionNumber) {
-    
+
     try {
 
       BoardEntity boardEntity = boardRepository.findByReceptionNumber(receptionNumber);
-      if (boardEntity == null) return ResponseDto.noExistBoard();
+      if (boardEntity == null)
+        return ResponseDto.noExistBoard();
 
       boardEntity.increaseViewCount();
       boardRepository.save(boardEntity);
@@ -115,10 +117,12 @@ public class BoardServiceImplimentation implements BoardService {
     try {
 
       BoardEntity boardEntity = boardRepository.findByReceptionNumber(receptionNumber);
-      if (boardEntity == null) return ResponseDto.noExistBoard();
-      
+      if (boardEntity == null)
+        return ResponseDto.noExistBoard();
+
       boolean status = boardEntity.getStatus();
-      if (status) return ResponseDto.writtenComment();
+      if (status)
+        return ResponseDto.writtenComment();
 
       String comment = dto.getComment();
       boardEntity.setStatus(true);
@@ -126,6 +130,27 @@ public class BoardServiceImplimentation implements BoardService {
 
       boardRepository.save(boardEntity);
 
+    } catch (Exception exception) {
+      exception.printStackTrace();
+      return ResponseDto.databaseError();
+    }
+    return ResponseDto.success();
+  }
+
+  @Override
+  public ResponseEntity<ResponseDto> deleteBoard(int receptionNumber, String userId) {
+    
+    try {
+
+      BoardEntity boardEntity = boardRepository.findByReceptionNumber(receptionNumber);
+      if(boardEntity == null) return ResponseDto.noExistBoard();
+
+      String writerId = boardEntity.getWriterId();
+      boolean isWriter = userId.equals(writerId);
+      if (!isWriter) return ResponseDto.authorizationFailed();
+
+      boardRepository.delete(boardEntity);
+      
     } catch (Exception exception) {
       exception.printStackTrace();
       return ResponseDto.databaseError();
