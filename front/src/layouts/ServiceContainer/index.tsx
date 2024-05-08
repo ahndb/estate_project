@@ -66,6 +66,9 @@ function SideNavigation({ path }: Props) {
     path === "Q&A 게시판" ? " active" : ""
   }`;
 
+  //                       state                      //
+  const { pathname } = useLocation(); 
+
   //                    function                    //
   const navigator = useNavigate();
 
@@ -74,7 +77,10 @@ function SideNavigation({ path }: Props) {
 
   const onRatioClickHandler = () => navigator(RATIO_ABSOLUTE_PATH);
 
-  const onQnaClickHandler = () => navigator(QNA_LIST_ABSOLUTE_PATH);
+  const onQnaClickHandler = () => {
+    if (pathname === QNA_LIST_ABSOLUTE_PATH) window.location.reload();
+    else navigator(QNA_LIST_ABSOLUTE_PATH);
+  };
 
   //                    render                    //
   return (
