@@ -1,5 +1,9 @@
 import axios from "axios";
-import { PostBoardRequestDto, PostCommentRequestDto } from "./dto/request";
+import {
+  PostBoardRequestDto,
+  PostCommentRequestDto,
+  PutBoardRequestDto,
+} from "./dto/request";
 import {
   DELETE_BOARD_URL,
   GET_BOARD_LIST_URL,
@@ -8,6 +12,7 @@ import {
   INCREASE_VIEW_COUNL_URL,
   POST_BOARD_REQUEST_URL,
   POST_COMMENT_REQUEST_URL,
+  PUT_BOARD_URL,
 } from "src/constant";
 import { bearerAuthorization, requestErrorHandler, requestHandler } from "..";
 import ResponseDto from "../response.dto";
@@ -78,6 +83,23 @@ export const getBoardRequest = async (
   const result = await axios
     .get(GET_BOARD_URL(receptionNumber), bearerAuthorization(accessToken))
     .then(requestHandler<GetBoardResponseDto>)
+    .catch(requestErrorHandler);
+  return result;
+};
+
+// function: Q&A 게시물 수정 API 함수
+export const putBoardRequest = async (
+  receptionNumber: number | string,
+  requestBody: PutBoardRequestDto,
+  accessToken: string
+) => {
+  const result = await axios
+    .put(
+      PUT_BOARD_URL(receptionNumber),
+      requestBody,
+      bearerAuthorization(accessToken)
+    )
+    .then(requestHandler<ResponseDto>)
     .catch(requestErrorHandler);
   return result;
 };

@@ -12,7 +12,7 @@ import { QNA_LIST_ABSOLUTE_PATH } from "src/constant";
 export default function QnaUpdate() {
   //                    state                    //
   const contentsRef = useRef<HTMLTextAreaElement | null>(null);
-  const { loginUserId } = useUserStore();
+  const { loginUserId, loginUserRole } = useUserStore();
   const { receptionNumber } = useParams();
   const [cookies] = useCookies();
   const [writerId, setWriterId] = useState<string>("");
@@ -50,7 +50,7 @@ export default function QnaUpdate() {
       return;
     }
     if (status) {
-      alert('답변이 완료된 게시물입니다.');
+      alert("답변이 완료된 게시물입니다.");
       navigator(QNA_LIST_ABSOLUTE_PATH);
       return;
     }
@@ -88,6 +88,11 @@ export default function QnaUpdate() {
     if (!receptionNumber || !cookies.accessToken) return;
     if (effectFlag) return;
     effectFlag = true;
+    if (loginUserRole !== "ROLE_USER") {
+      navigator(QNA_LIST_ABSOLUTE_PATH);
+      return;
+    }
+
     getBoardRequest(receptionNumber, cookies.accessToken).then(
       getBoardResponse
     );

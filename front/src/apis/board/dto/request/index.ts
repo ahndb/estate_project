@@ -9,3 +9,9 @@ export interface PostCommentRequestDto {
   comment : string;
 }
 
+// description: Q&A 게시물 수정 Request Body DTO //
+export interface PutBoardRequestDto {
+  title : string;
+  contents : string;
+}
+
