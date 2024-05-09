@@ -1,5 +1,6 @@
 import React from 'react'
 import './style.css'
+import SelectBox from 'src/components/Selectbox'
 
 
 //                    component                    //
@@ -11,8 +12,7 @@ export default function NotFound() {
       <div className='local-top'>
         <div className='local-search-box'>
           <div className='select-box'>
-            <div className='select-selected'></div>
-            <div className='select-open-button'></div>
+            <SelectBox />
           </div>
           <div className='primary-button'>검색</div>
         </div>
