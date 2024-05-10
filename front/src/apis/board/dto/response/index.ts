@@ -19,4 +19,3 @@ export interface GetBoardResponseDto extends ResponseDto {
   contents: string;
   comment: string | null;
 }
-

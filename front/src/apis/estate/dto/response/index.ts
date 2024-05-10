@@ -24,5 +24,4 @@ export interface GetRatioDataResponseDto extends ResponseDto {
   monthRentRatio4060: number[];
   monthRentRatio6085: number[];
   monthRentRatio85: number[];
-
 }
