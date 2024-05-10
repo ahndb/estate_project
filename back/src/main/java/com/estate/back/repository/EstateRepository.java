@@ -27,14 +27,14 @@ public interface EstateRepository extends JpaRepository<EstateEntity, Integer> {
   @Query(value = 
   "SELECT `year_month` as yearMonth, " +
       "return40, return4060, return6085, return85, " +
-      "lease_ratio40 as leaseRation40, " +
-      "lease_ratio4060 as leaseRation4060, " +
-      "lease_ratio6085 as leaseRation6085, " +
-      "lease_ratio85 as leaseRation85, " +
-      "month_rent_ratio40 as monthRentRation40, " +
-      "month_rent_ratio4060 as monthRentRation4060, " +
-      "month_rent_ratio6085 as monthRentRation6085, " +
-      "month_rent_ratio85 as monthRentRation85 " +
+      "lease_ratio40 as leaseRatio40, " +
+      "lease_ratio4060 as leaseRatio4060, " +
+      "lease_ratio6085 as leaseRatio6085, " +
+      "lease_ratio85 as leaseRatio85, " +
+      "month_rent_ratio40 as monthRentRatio40, " +
+      "month_rent_ratio4060 as monthRentRatio4060, " +
+      "month_rent_ratio6085 as monthRentRatio6085, " +
+      "month_rent_ratio85 as monthRentRatio85 " +
   "FROM estate " +
   "WHERE `year_month` " +
   "BETWEEN '2023-01-01' AND '2023-12-31' " +
