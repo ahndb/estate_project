@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.estate.back.entity.EstateEntity;
 import com.estate.back.repository.resultSet.GetLocalDataResultSet;
+import com.estate.back.repository.resultSet.GetRatioDataResultSet;
 
 @Repository
 public interface EstateRepository extends JpaRepository<EstateEntity, Integer> {
@@ -23,4 +24,23 @@ public interface EstateRepository extends JpaRepository<EstateEntity, Integer> {
   )
   List<GetLocalDataResultSet> getLocalData(@Param("local") String local);
 
+  @Query(value = 
+  "SELECT `year_month` as yearMonth, " +
+      "return40, return4060, return6085, return85, " +
+      "lease_ratio40 as leaseRation40, " +
+      "lease_ratio4060 as leaseRation4060, " +
+      "lease_ratio6085 as leaseRation6085, " +
+      "lease_ratio85 as leaseRation85, " +
+      "month_rent_ratio40 as monthRentRation40, " +
+      "month_rent_ratio4060 as monthRentRation4060, " +
+      "month_rent_ratio6085 as monthRentRation6085, " +
+      "month_rent_ratio85 as monthRentRation85 " +
+  "FROM estate " +
+  "WHERE `year_month` " +
+  "BETWEEN '2023-01-01' AND '2023-12-31' " +
+  "AND `local` = :local ",
+  nativeQuery = true
+  
+  )
+  List<GetRatioDataResultSet> getRatioData(@Param("local") String local);
 } 
