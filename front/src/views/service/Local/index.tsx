@@ -28,10 +28,10 @@ export default function Local() {
         min: 150,
         max: 300,
         ticks: {
-          stepSize: 30
-        }
-      }
-    }
+          stepSize: 30,
+        },
+      },
+    },
   };
 
   const leaseOptions = {
@@ -41,10 +41,10 @@ export default function Local() {
         min: 150,
         max: 300,
         ticks: {
-          stepSize: 30
-        }
-      }
-    }
+          stepSize: 30,
+        },
+      },
+    },
   };
 
   const monthRentOptions = {
@@ -54,10 +54,10 @@ export default function Local() {
         min: 150,
         max: 300,
         ticks: {
-          stepSize: 30
-        }
-      }
-    }
+          stepSize: 30,
+        },
+      },
+    },
   };
 
   //                    state                    //
@@ -159,7 +159,12 @@ export default function Local() {
           <div className="local-card-unit">(단위: 백만원)</div>
         </div>
         <div className="local-card-chart-box">
-          <Line width={'1086px'} height={'238px'} options={saleOptions} data={saleData} />
+          <Line
+            width={"1086px"}
+            height={"238px"}
+            options={saleOptions}
+            data={saleData}
+          />
         </div>
       </div>
       <div className="local-card">
@@ -168,7 +173,12 @@ export default function Local() {
           <div className="local-card-unit">(단위: 백만원)</div>
         </div>
         <div className="local-card-chart-box">
-          <Line width={'1086px'} height={'238px'} options={leaseOptions} data={leaseData} />
+          <Line
+            width={"1086px"}
+            height={"238px"}
+            options={leaseOptions}
+            data={leaseData}
+          />
         </div>
       </div>
       <div className="local-card">
@@ -177,7 +187,12 @@ export default function Local() {
           <div className="local-card-unit">(단위: 백만원)</div>
         </div>
         <div className="local-card-chart-box">
-          <Line width={'1086px'} height={'238px'} options={monthRentOptions} data={monthRentData} />
+          <Line
+            width={"1086px"}
+            height={"238px"}
+            options={monthRentOptions}
+            data={monthRentData}
+          />
         </div>
       </div>
     </div>
