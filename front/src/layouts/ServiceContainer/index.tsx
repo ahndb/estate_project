@@ -137,12 +137,8 @@ export default function ServiceContainer() {
   //                    effect                    //
   useEffect(() => {
     const path =
-      pathname === LOCAL_ABSOLUTE_PATH
-        ? "지역 평균"
-        : pathname === RATIO_ABSOLUTE_PATH
-        ? "비율 계산"
-        : pathname.startsWith(QNA_LIST_ABSOLUTE_PATH)
-        ? "Q&A 게시판"
+      pathname === LOCAL_ABSOLUTE_PATH ? "지역 평균" : pathname === RATIO_ABSOLUTE_PATH ? "비율 계산"
+        : pathname.startsWith(QNA_LIST_ABSOLUTE_PATH) ? "Q&A 게시판"
         : "";
 
     setPath(path);
@@ -153,7 +149,7 @@ export default function ServiceContainer() {
       navigator(AUTH_ABSOLUTE_PATH);
       return;
     }
- 
+
 
     getSignInUserRequest(cookies.accessToken).then(getSignInUserResponse);
   }, [cookies.accessToken]);
